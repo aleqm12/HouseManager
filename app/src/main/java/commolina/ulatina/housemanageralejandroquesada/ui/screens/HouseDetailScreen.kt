@@ -13,35 +13,35 @@ import commolina.ulatina.housemanageralejandroquesada.viewmodel.HouseViewModel
 
 @Composable
 fun HouseDetailScreen(
-    navController: NavController,
-    viewModel: HouseViewModel = hiltViewModel(),
-    houseId: Int
+    navController: NavController, // Controlador de navegación para manejar la navegación
+    viewModel: HouseViewModel = hiltViewModel(), // ViewModel de la casa, inyectado automáticamente
+    houseId: Int // ID de la casa para obtener sus detalles
 ) {
-    // Cargar los detalles de la casa
-    val house by viewModel.getItemById(houseId).observeAsState(null)
+    // Cargar los detalles de la casa usando el ViewModel
+    val house by viewModel.getItemById(houseId).observeAsState(null) // Observa el estado del objeto house
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+            .fillMaxSize() // Hace que la columna llene todo el espacio disponible
+            .padding(16.dp) // Agrega un padding de 16dp alrededor de la columna
     ) {
-        if (house != null) {
-            Text(text = "Nombre: ${house!!.name}", style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Descripción: ${house!!.description}", style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Metros Cuadrados: ${house!!.squaremeters}", style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Molina: ${house!!.molina}", style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(16.dp))
+        if (house != null) { // Verifica si se encontraron los detalles de la casa
+            Text(text = "Nombre: ${house!!.name}", style = MaterialTheme.typography.titleLarge) // Muestra el nombre de la casa
+            Spacer(modifier = Modifier.height(8.dp)) // Espacio entre elementos
+            Text(text = "Descripción: ${house!!.description}", style = MaterialTheme.typography.bodyLarge) // Muestra la descripción
+            Spacer(modifier = Modifier.height(8.dp)) // Espacio entre elementos
+            Text(text = "Metros Cuadrados: ${house!!.squaremeters}", style = MaterialTheme.typography.bodyLarge) // Muestra los metros cuadrados
+            Spacer(modifier = Modifier.height(8.dp)) // Espacio entre elementos
+            Text(text = "Molina: ${house!!.molina}", style = MaterialTheme.typography.bodyLarge) // Muestra la información de Molina
+            Spacer(modifier = Modifier.height(16.dp)) // Espacio entre elementos
             Button(
-                onClick = { navController.navigate("houseForm/${house!!.id}") },
-                modifier = Modifier.fillMaxWidth()
+                onClick = { navController.navigate("houseForm/${house!!.id}") }, // Navega a la pantalla de edición de casa
+                modifier = Modifier.fillMaxWidth() // Botón que llena todo el ancho disponible
             ) {
-                Text("Editar Casa")
+                Text("Editar Casa") // Texto del botón
             }
         } else {
-            Text("Casa no encontrada", style = MaterialTheme.typography.titleLarge)
+            Text("Casa no encontrada", style = MaterialTheme.typography.titleLarge) // Mensaje si la casa no fue encontrada
         }
     }
 }

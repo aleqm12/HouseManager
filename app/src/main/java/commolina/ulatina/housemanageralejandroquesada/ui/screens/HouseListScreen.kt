@@ -20,32 +20,36 @@ import com.google.gson.Gson
 
 @Composable
 fun HouseListScreen(
-    navController: NavController,
-    viewModel: HouseViewModel = hiltViewModel()
+    navController: NavController, // Controlador de navegación para manejar la navegación
+    viewModel: HouseViewModel = hiltViewModel() // ViewModel de la casa, inyectado automáticamente
 ) {
     // Observa la lista de casas desde el ViewModel
-    val houses by viewModel.allItems.observeAsState(emptyList())
+    val houses by viewModel.allItems.observeAsState(emptyList()) // Obtiene la lista de casas
 
     Scaffold(
         floatingActionButton = {
+            // Botón flotante para agregar una nueva casa
             FloatingActionButton(onClick = { navController.navigate("houseForm/null") }) {
-                Icon(Icons.Default.Add, contentDescription = "Add House")
+                Icon(Icons.Default.Add, contentDescription = "Add House") // Icono de agregar casa
             }
         }
-    ) { padding ->
+    ) { padding -> // Padding proporcionado por Scaffold
+        // Lista de casas
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+                .fillMaxSize() // Llena todo el espacio disponible
+                .padding(padding) // Aplica el padding proporcionado por Scaffold
         ) {
+            // Itera sobre la lista de casas
             items(houses) { house ->
                 HouseItem(
-                    house = house,
+                    house = house, // Pasa la casa a la vista del item
                     onHouseClick = {
-                        val houseJson = Gson().toJson(house) // Serializa la casa a JSON
+                        // Serializa la casa a JSON y navega a la pantalla de detalles
+                        val houseJson = Gson().toJson(house)
                         navController.navigate("houseDetail/$houseJson")
                     },
-                    onDeleteClick = { viewModel.deleteItem(house) }
+                    onDeleteClick = { viewModel.deleteItem(house) } // Elimina la casa usando el ViewModel
                 )
             }
         }
@@ -54,23 +58,23 @@ fun HouseListScreen(
 
 @Composable
 fun HouseItem(
-    house: HouseAlejandro,
-    onHouseClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    house: HouseAlejandro, // Objeto de la casa
+    onHouseClick: () -> Unit, // Acción al hacer clic en la casa
+    onDeleteClick: () -> Unit // Acción al hacer clic en eliminar
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onHouseClick() }
+            .fillMaxWidth() // Llena todo el ancho disponible
+            .padding(8.dp) // Agrega un padding de 8dp alrededor de la tarjeta
+            .clickable { onHouseClick() } // Hace que la tarjeta sea clickeable
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp) // Padding dentro de la tarjeta
         ) {
-            Text(text = house.name, style = MaterialTheme.typography.titleMedium)
-            Text(text = "Square Meters: ${house.squaremeters}", style = MaterialTheme.typography.bodyMedium)
-            Button(onClick = onDeleteClick) {
-                Text("Delete")
+            Text(text = house.name, style = MaterialTheme.typography.titleMedium) // Muestra el nombre de la casa
+            Text(text = "Square Meters: ${house.squaremeters}", style = MaterialTheme.typography.bodyMedium) // Muestra los metros cuadrados
+            Button(onClick = onDeleteClick) { // Botón para eliminar la casa
+                Text("Delete") // Texto del botón
             }
         }
     }
