@@ -13,20 +13,24 @@ import commolina.ulatina.housemanageralejandroquesada.viewmodel.HouseViewModel
 
 @Composable
 fun HouseFormScreen(
-    navController: NavController,
-    viewModel: HouseViewModel = hiltViewModel(),
-    houseId: Int? = null
+    navController: NavController, // Controlador de navegación
+    viewModel: HouseViewModel = hiltViewModel(), // ViewModel inyectado automáticamente
+    houseId: Int? = null // ID de la casa para editar (puede ser nulo para una nueva casa)
 ) {
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var squareMeters by remember { mutableStateOf("") }
-    var molina by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+    // Estados para los campos del formulario
+    var name by remember { mutableStateOf("") } // Campo para el nombre
+    var description by remember { mutableStateOf("") } // Campo para la descripción
+    var squareMeters by remember { mutableStateOf("") } // Campo para los metros cuadrados
+    var molina by remember { mutableStateOf("") } // Campo para Molina
+    var errorMessage by remember { mutableStateOf("") } // Mensaje de error
 
+    // Obtener la casa si estamos en modo de edición
     val house by viewModel.getItemById(houseId ?: -1).observeAsState(null)
 
+    // Efecto que se ejecuta cuando se obtiene la casa
     LaunchedEffect(house) {
         house?.let {
+            // Asigna los valores de la casa a los campos del formulario
             name = it.name
             description = it.description
             squareMeters = it.squaremeters.toString()
@@ -36,88 +40,99 @@ fun HouseFormScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+            .fillMaxSize() // Llena todo el espacio disponible
+            .padding(16.dp) // Agrega un padding de 16dp
     ) {
+        // Campo para el nombre
         OutlinedTextField(
             value = name,
             onValueChange = {
-                name = it
-                errorMessage = if (it.isEmpty()) "El nombre es requerido" else ""
+                name = it // Actualiza el estado del nombre
+                errorMessage = if (it.isEmpty()) "El nombre es requerido" else "" // Validación
             },
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Nombre") }, // Etiqueta del campo
+            modifier = Modifier.fillMaxWidth() // Ancho completo
         )
 
+        // Muestra un mensaje de error si existe
         if (errorMessage.isNotEmpty()) {
             Text(errorMessage, color = MaterialTheme.colorScheme.error)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp)) // Espacio entre elementos
 
+        // Campo para la descripción
         OutlinedTextField(
             value = description,
-            onValueChange = { description = it },
-            label = { Text("Descripción") },
-            modifier = Modifier.fillMaxWidth()
+            onValueChange = { description = it }, // Actualiza la descripción
+            label = { Text("Descripción") }, // Etiqueta del campo
+            modifier = Modifier.fillMaxWidth() // Ancho completo
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp)) // Espacio entre elementos
 
+        // Campo para los metros cuadrados
         OutlinedTextField(
             value = squareMeters,
             onValueChange = {
-                squareMeters = it
-                errorMessage = if (it.isNotEmpty() && it.toDoubleOrNull() == null) "Debe ser un número válido" else ""
+                squareMeters = it // Actualiza los metros cuadrados
+                errorMessage = if (it.isNotEmpty() && it.toDoubleOrNull() == null) "Debe ser un número válido" else "" // Validación
             },
-            label = { Text("Metros Cuadrados") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Metros Cuadrados") }, // Etiqueta del campo
+            modifier = Modifier.fillMaxWidth() // Ancho completo
         )
 
+        // Muestra un mensaje de error si existe
         if (errorMessage.isNotEmpty()) {
             Text(errorMessage, color = MaterialTheme.colorScheme.error)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp)) // Espacio entre elementos
 
+        // Campo para Molina
         OutlinedTextField(
             value = molina,
-            onValueChange = { molina = it },
-            label = { Text("Molina") },
-            modifier = Modifier.fillMaxWidth()
+            onValueChange = { molina = it }, // Actualiza el estado de Molina
+            label = { Text("Molina") }, // Etiqueta del campo
+            modifier = Modifier.fillMaxWidth() // Ancho completo
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre elementos
 
+        // Botón para guardar o actualizar la casa
         Button(
             onClick = {
+                // Validación antes de guardar
                 if (name.isBlank()) {
-                    errorMessage = "El nombre es requerido"
+                    errorMessage = "El nombre es requerido" // Mensaje de error
                     return@Button
                 }
 
                 if (squareMeters.isNotEmpty() && squareMeters.toDoubleOrNull() == null) {
-                    errorMessage = "Metros cuadrados debe ser un número válido"
+                    errorMessage = "Metros cuadrados debe ser un número válido" // Mensaje de error
                     return@Button
                 }
 
+                // Crea un objeto HouseAlejandro con los valores del formulario
                 val house = HouseAlejandro(
-                    id = houseId ?: 0,
+                    id = houseId ?: 0, // Asigna 0 si houseId es nulo
                     name = name,
                     description = description,
-                    squaremeters = squareMeters.toDoubleOrNull() ?: 0.0,
+                    squaremeters = squareMeters.toDoubleOrNull() ?: 0.0, // Convierte a Double
                     molina = molina
                 )
 
+                // Inserta o actualiza la casa en el ViewModel
                 if (houseId == null) {
-                    viewModel.insert(house)
+                    viewModel.insert(house) // Inserta nueva casa
                 } else {
-                    viewModel.update(house)
+                    viewModel.update(house) // Actualiza casa existente
                 }
-                navController.popBackStack()
+                navController.popBackStack() // Regresa a la pantalla anterior
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth() // Ancho completo
         ) {
+            // Texto del botón
             Text(if (houseId == null) "Agregar Casa" else "Actualizar Casa")
         }
     }
