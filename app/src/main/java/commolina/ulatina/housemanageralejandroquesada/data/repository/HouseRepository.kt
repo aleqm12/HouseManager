@@ -32,8 +32,8 @@ class HouseRepository @Inject constructor(private val houseDao: HouseDao) {
         houseDao.delete(houseAlejandro)
     }
 
-    suspend fun getItemById(houseId: Int): HouseAlejandro? {
-        return houseDao.getItemById(houseId)
-}
-
+    // Obtiene una casa por ID como LiveData
+    fun getItemById(houseId: Int): LiveData<HouseAlejandro?> {
+        return houseDao.getItemById(houseId) // Asegúrate de que esta función esté en tu DAO
+    }
 }

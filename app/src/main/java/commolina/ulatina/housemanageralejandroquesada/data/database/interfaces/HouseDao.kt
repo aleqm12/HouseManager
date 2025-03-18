@@ -32,9 +32,7 @@ interface HouseDao {
     @Delete
     suspend fun delete(houseAlejandro: HouseAlejandro)
 
-    // Obtiene una casa por ID
+    // Obtiene una casa por ID como LiveData
     @Query("SELECT * FROM houses WHERE id = :houseId LIMIT 1")
-    suspend fun getItemById(houseId: Int): HouseAlejandro?
-
-
+    fun getItemById(houseId: Int): LiveData<HouseAlejandro?>
 }

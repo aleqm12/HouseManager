@@ -1,14 +1,13 @@
 package commolina.ulatina.housemanageralejandroquesada.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import commolina.ulatina.housemanageralejandroquesada.data.repository.HouseRepository
-import javax.inject.Inject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.lifecycle.viewModelScope
+import commolina.ulatina.housemanageralejandroquesada.data.repository.HouseRepository
 import commolina.ulatina.housemanageralejandroquesada.model.HouseAlejandro
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HouseViewModel @Inject constructor(
@@ -42,10 +41,6 @@ class HouseViewModel @Inject constructor(
 
     // Función para obtener una casa por ID como LiveData
     fun getItemById(houseId: Int): LiveData<HouseAlejandro?> {
-        val houseLiveData = MutableLiveData<HouseAlejandro?>()
-        viewModelScope.launch {
-            houseLiveData.value = repository.getItemById(houseId)
-        }
-        return houseLiveData
+        return repository.getItemById(houseId) // Devuelve LiveData directamente del repositorio
     }
 }

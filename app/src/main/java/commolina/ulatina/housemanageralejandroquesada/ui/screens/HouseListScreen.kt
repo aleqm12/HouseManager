@@ -20,36 +20,35 @@ import com.google.gson.Gson
 
 @Composable
 fun HouseListScreen(
-    navController: NavController, // Controlador de navegación para manejar la navegación
-    viewModel: HouseViewModel = hiltViewModel() // ViewModel de la casa, inyectado automáticamente
+    navController: NavController,
+    viewModel: HouseViewModel = hiltViewModel()
 ) {
     // Observa la lista de casas desde el ViewModel
-    val houses by viewModel.allItems.observeAsState(emptyList()) // Obtiene la lista de casas
+    val houses by viewModel.allItems.observeAsState(emptyList())
 
     Scaffold(
         floatingActionButton = {
             // Botón flotante para agregar una nueva casa
             FloatingActionButton(onClick = { navController.navigate("houseForm/null") }) {
-                Icon(Icons.Default.Add, contentDescription = "Add House") // Icono de agregar casa
+                Icon(Icons.Default.Add, contentDescription = "Add House")
             }
         }
-    ) { padding -> // Padding proporcionado por Scaffold
+    ) { padding ->
         // Lista de casas
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize() // Llena todo el espacio disponible
-                .padding(padding) // Aplica el padding proporcionado por Scaffold
+                .fillMaxSize()
+                .padding(padding)
         ) {
-            // Itera sobre la lista de casas
             items(houses) { house ->
                 HouseItem(
-                    house = house, // Pasa la casa a la vista del item
+                    house = house,
                     onHouseClick = {
-                        // Serializa la casa a JSON y navega a la pantalla de detalles
+                        // Serializa la casa a JSON y navega a la pantalla de edición
                         val houseJson = Gson().toJson(house)
-                        navController.navigate("houseDetail/$houseJson")
+                        navController.navigate("houseForm/$houseJson")
                     },
-                    onDeleteClick = { viewModel.deleteItem(house) } // Elimina la casa usando el ViewModel
+                    onDeleteClick = { viewModel.deleteItem(house) }
                 )
             }
         }
@@ -58,23 +57,31 @@ fun HouseListScreen(
 
 @Composable
 fun HouseItem(
-    house: HouseAlejandro, // Objeto de la casa
-    onHouseClick: () -> Unit, // Acción al hacer clic en la casa
-    onDeleteClick: () -> Unit // Acción al hacer clic en eliminar
+    house: HouseAlejandro,
+    onHouseClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth() // Llena todo el ancho disponible
-            .padding(8.dp) // Agrega un padding de 8dp alrededor de la tarjeta
-            .clickable { onHouseClick() } // Hace que la tarjeta sea clickeable
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onHouseClick() }
     ) {
         Column(
-            modifier = Modifier.padding(16.dp) // Padding dentro de la tarjeta
+            modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = house.name, style = MaterialTheme.typography.titleMedium) // Muestra el nombre de la casa
-            Text(text = "Square Meters: ${house.squaremeters}", style = MaterialTheme.typography.bodyMedium) // Muestra los metros cuadrados
-            Button(onClick = onDeleteClick) { // Botón para eliminar la casa
-                Text("Delete") // Texto del botón
+            Text(text = house.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = "Square Meters: ${house.squaremeters}", style = MaterialTheme.typography.bodyMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = onDeleteClick) {
+                    Text("Delete")
+                }
+                Button(onClick = onHouseClick) {
+                    Text("Edit")
+                }
             }
         }
     }

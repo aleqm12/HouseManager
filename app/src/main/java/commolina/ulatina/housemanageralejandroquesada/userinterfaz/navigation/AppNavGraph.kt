@@ -44,10 +44,12 @@ fun AppNavGraph(viewModelStoreOwner: ViewModelStoreOwner = LocalViewModelStoreOw
         ) { backStackEntry ->
             // Recuperamos el objeto HouseAlejandro
             val json = backStackEntry.arguments?.getString("houseJson")
-            val house = if (json != null) {
-                Gson().fromJson(json, HouseAlejandro::class.java)
-            } else {
-                null
+            val house = json?.let {
+                try {
+                    Gson().fromJson(it, HouseAlejandro::class.java)
+                } catch (e: Exception) {
+                    null // Manejo de errores si el JSON es inválido
+                }
             }
 
             val viewModel: HouseViewModel = hiltViewModel(viewModelStoreOwner)
@@ -69,14 +71,24 @@ fun AppNavGraph(viewModelStoreOwner: ViewModelStoreOwner = LocalViewModelStoreOw
         ) { backStackEntry ->
             // Recuperamos el objeto HouseAlejandro
             val json = backStackEntry.arguments?.getString("houseJson")
-            val house = Gson().fromJson(json, HouseAlejandro::class.java)
+            val house = json?.let {
+                try {
+                    Gson().fromJson(it, HouseAlejandro::class.java)
+                } catch (e: Exception) {
+                    null // Manejo de errores si el JSON es inválido
+                }
+            }
 
-            val viewModel: HouseViewModel = hiltViewModel(viewModelStoreOwner)
-            HouseDetailScreen(
-                navController = navController,
-                viewModel = viewModel,
-                houseId = house.id // Pasamos el ID de la casa
-            )
+            if (house != null) {
+                val viewModel: HouseViewModel = hiltViewModel(viewModelStoreOwner)
+                HouseDetailScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    houseId = house.id // Pasamos el ID de la casa
+                )
+            } else {
+                // Manejo en caso de que la casa sea null (ej. navegar a una pantalla de error)
+            }
         }
     }
 }
